@@ -6,42 +6,45 @@ import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.util.Log;
 
 public class LockScreenService extends Service {
 
-    BroadcastReceiver receiver;
+  BroadcastReceiver receiver;
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
+  @Override
+  @SuppressWarnings("deprecation")
+  public void onCreate() {
+    KeyguardManager.KeyguardLock key;
+    KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public void onCreate() {
-        KeyguardManager.KeyguardLock key;
-        KeyguardManager km = (KeyguardManager)getSystemService(KEYGUARD_SERVICE);
+    //This is deprecated, but it is a simple way to disable the lock screen in code
+    key = km.newKeyguardLock("IN");
 
-        //This is deprecated, but it is a simple way to disable the lockscreen in code
-        key = km.newKeyguardLock("IN");
+    key.disableKeyguard();
 
-        key.disableKeyguard();
+    //Start listening for the Screen On, Screen Off, and Boot completed actions
+    IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+    filter.addAction(Intent.ACTION_SCREEN_OFF);
+    filter.addAction(Intent.ACTION_BOOT_COMPLETED);
 
-        //Start listening for the Screen On, Screen Off, and Boot completed actions
-        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
-        filter.addAction(Intent.ACTION_BOOT_COMPLETED);
+    //Set up a receiver to listen for the Intents in this Service
+    receiver = new LockScreenReceiver();
+    registerReceiver(receiver, filter);
 
-        //Set up a receiver to listen for the Intents in this Service
-        receiver = new LockScreenReceiver();
-        registerReceiver(receiver, filter);
+    super.onCreate();
+  }
 
-        super.onCreate();
-    }
 
-    @Override
-    public void onDestroy() {
-        unregisterReceiver(receiver);
-        super.onDestroy();
-    }
+  @Override
+  public void onDestroy() {
+    unregisterReceiver(receiver);
+    super.onDestroy();
+  }
+
+  @Override
+  public IBinder onBind(Intent intent) {
+    return null;
+  }
 }
