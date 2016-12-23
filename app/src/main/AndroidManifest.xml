@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.example.lockscreen">
+          xmlns:tools="http://schemas.android.com/tools" package="org.example.lockscreen">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
@@ -16,12 +16,16 @@
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
 
         <service android:name=".LockScreenService"/>
+        <service android:name=".UnlockedService" />
+
 
         <receiver
-            android:name=".LockScreenReceiver"
+            android:name=".StartupReceiver"
+            android:directBootAware="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
@@ -34,19 +38,18 @@
             android:theme="@style/FullscreenTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+
         <activity android:name=".Main2Activity"
                   android:launchMode="standard"
                   android:stateNotNeeded="true"
+                  android:exported="true"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+
         </activity>
+
     </application>
 
 </manifest>

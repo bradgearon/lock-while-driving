@@ -15,11 +15,16 @@ import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 
 import com.unity3d.ads.IUnityAdsListener;
 import com.unity3d.ads.UnityAds;
+import com.unity3d.ads.adunit.AdUnitActivity;
+import com.unity3d.ads.api.AdUnit;
+import com.unity3d.ads.properties.ClientProperties;
 
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -74,6 +79,7 @@ public class FullscreenActivity extends Activity {
   private GestureDetectorCompat mDetector;
   private Random rand = new Random();
   private Thread thread;
+  private static boolean showing;
 
   public static boolean isActivityVisible() {
     return activityVisible;
@@ -87,8 +93,14 @@ public class FullscreenActivity extends Activity {
     activityVisible = false;
   }
 
-  private static boolean activityVisible;
+  private static boolean activityVisible = false;
   private static Context thisContext;
+
+  @Override
+  public void onWindowFocusChanged(boolean hasFocus) {
+    super.onWindowFocusChanged(hasFocus);
+    activityVisible = hasFocus;
+  }
 
   public static Context getContext() {
     return thisContext;
@@ -100,7 +112,6 @@ public class FullscreenActivity extends Activity {
     activityManager.moveTaskToFront(getTaskId(), 0);
     overridePendingTransition(0, 0);
   }
-
 
   public void makeFullScreen() {
     this.getWindow()
@@ -121,9 +132,7 @@ public class FullscreenActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     thisContext = this;
     super.onCreate(savedInstanceState);
-    if (savedInstanceState != null) {
-      finish();
-    }
+
     makeFullScreen();
     setContentView(R.layout.activity_fullscreen);
 
@@ -133,14 +142,8 @@ public class FullscreenActivity extends Activity {
 
     mDetector = new GestureDetectorCompat(this, new MyGestureListener());
 
-    /*
-    UnityAdsListener unityAdsListener = new UnityAdsListener();
-    UnityAds.initialize(this, "defaultVideoAndPictureZone", unityAdsListener);
-    */
-    startService(new Intent(this,
-      LockScreenService.class));
+    startService(new Intent(this, LockScreenService.class));
     activityResumed();
-
   }
 
   @Override
@@ -151,20 +154,11 @@ public class FullscreenActivity extends Activity {
     // created, to briefly hint to the user that UI controls
     // are available.
     delayedHide(100);
-
   }
 
   @Override
   protected void onPostResume() {
     super.onPostResume();
-    /*
-    if(UnityAds.isReady()) {
-      int  n = rand.nextInt(100) + 1;
-      if(n > 77) {
-        UnityAds.show(this, "defaultVideoAndPictureZone");
-      }
-    }
-    */
     activityResumed();
   }
 
@@ -225,13 +219,11 @@ public class FullscreenActivity extends Activity {
 
     @Override
     public void onUnityAdsStart(String zoneId) {
-
-
+      FullscreenActivity.activityResumed();
     }
 
     @Override
     public void onUnityAdsFinish(String zoneId, UnityAds.FinishState result) {
-
 
     }
 
@@ -256,7 +248,7 @@ public class FullscreenActivity extends Activity {
         return true;
       }
 
-      Intent newIntent = new Intent(getBaseContext(), Main2Activity.class);
+      Intent newIntent = new Intent(getContext(), Main2Activity.class);
       newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
       startActivity(newIntent);
       overridePendingTransition(0, 0);

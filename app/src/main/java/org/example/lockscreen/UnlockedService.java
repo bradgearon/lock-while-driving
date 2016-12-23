@@ -8,27 +8,19 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 
-public class LockScreenService extends Service {
+public class UnlockedService extends Service {
 
   BroadcastReceiver receiver;
 
   @Override
   public void onCreate() {
-    Log.d("com.wds.untitled2", "on create lock screen service");
+    Log.d("com.wds.untitled2", "on create unlocked service");
 
-    KeyguardManager.KeyguardLock key;
-    KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
-
-    //This is deprecated, but it is a simple way to disable the lock screen in code
-    key = km.newKeyguardLock("IN");
-
-    key.disableKeyguard();
-
-    IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-    filter.addAction(Intent.ACTION_SCREEN_OFF);
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(Intent.ACTION_USER_PRESENT);
 
     //Set up a receiver to listen for the Intents in this Service
-    receiver = new LockScreenReceiver();
+    receiver = new UnlockedReceiver();
     registerReceiver(receiver, filter);
 
     super.onCreate();

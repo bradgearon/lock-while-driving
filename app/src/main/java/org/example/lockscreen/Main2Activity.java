@@ -2,11 +2,9 @@ package org.example.lockscreen;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.view.WindowManager;
 
 public class Main2Activity extends Activity {
 
@@ -18,18 +16,21 @@ public class Main2Activity extends Activity {
   }
 
   @Override
-  protected void onPostResume() {
-    super.onPostResume();
-  }
-
-  @Override
   protected void onResume() {
     super.onResume();
+
     Intent backToFullScreenActivity = new Intent(this, FullscreenActivity.class);
     backToFullScreenActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     startActivity(backToFullScreenActivity);
     overridePendingTransition(0, 0);
-    finish();
+
+    Handler handler = new Handler(getMainLooper());
+    handler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        finish();
+      }
+    }, 1);
   }
 
 
