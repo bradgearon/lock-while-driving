@@ -165,7 +165,9 @@ public class FullscreenActivity extends Activity {
   @Override
   protected void onPause() {
     super.onPause();
-    moveToFront();
+    if(RangingService.isInRange()) {
+      moveToFront();
+    }
     activityPaused();
   }
 
@@ -248,10 +250,12 @@ public class FullscreenActivity extends Activity {
         return true;
       }
 
-      Intent newIntent = new Intent(getContext(), Main2Activity.class);
-      newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-      startActivity(newIntent);
-      overridePendingTransition(0, 0);
+      if(RangingService.isInRange()) {
+        Intent newIntent = new Intent(getContext(), Main2Activity.class);
+        newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(newIntent);
+        overridePendingTransition(0, 0);
+      }
 
       Log.d(DEBUG_TAG, "onFling: " + event1.toString() + event2.toString());
       return true;

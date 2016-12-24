@@ -22,8 +22,9 @@ public class LockScreenReceiver extends BroadcastReceiver {
       public void run() {
         try {
           while (true) {
-            if (FullscreenActivity.getContext() == null ||
-              FullscreenActivity.isActivityVisible()) {
+            if (FullscreenActivity.getContext() == null
+              || FullscreenActivity.isActivityVisible()
+              || !RangingService.isInRange()) {
               Thread.sleep(500);
               continue;
             }

@@ -19,6 +19,10 @@ public class Main2Activity extends Activity {
   protected void onResume() {
     super.onResume();
 
+    Log.d("com.wds.untitled2", "starting ranging service");
+    Intent rangingIntent = new Intent(this, RangingService.class);
+    startService(rangingIntent);
+
     Intent backToFullScreenActivity = new Intent(this, FullscreenActivity.class);
     backToFullScreenActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     startActivity(backToFullScreenActivity);

@@ -16,6 +16,10 @@ public class LockScreenService extends Service {
   public void onCreate() {
     Log.d("com.wds.untitled2", "on create lock screen service");
 
+    Intent backToFullScreenActivity = new Intent(this, Main2Activity.class);
+    backToFullScreenActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    startActivity(backToFullScreenActivity);
+
     KeyguardManager.KeyguardLock key;
     KeyguardManager km = (KeyguardManager) getSystemService(KEYGUARD_SERVICE);
 
